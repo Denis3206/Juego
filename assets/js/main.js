@@ -72,7 +72,7 @@ return image
 }    
 
 const ImagenSuelo = createImage('./assets/img/Suelo.jpg')
-const FondoJuego =createImage('/assets/img/fondoJuego.jpg')
+const FondoJuego =createImage('./assets/img/fondoJuego.jpg')
 
 
 /* image.onload=function(){ */
