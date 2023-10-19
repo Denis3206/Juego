@@ -1,13 +1,7 @@
-
+const canvas =document.querySelector('canvas');
+const ctx= canvas.getContext('2d');
 canvas.width=1024
 canvas.height=576
-
-
-
-let gameStarted=false
-function IniciarJuego(){
-    gameStarted=true
-
 
 const gravedad= 0.5
 
@@ -90,8 +84,8 @@ const plataforms=[new Plataform({x:-1,y:470,image:ImagenSuelo}),new Plataform({x
 ///Objetos del juego
 const genericObjects= [
     new GenericObject({
-        x:-1,
-        y:-1,
+        x:500,
+        y:500,
         image: ImagenSuelo
         
     })
@@ -207,12 +201,7 @@ addEventListener('keyup', ({keyCode}) => {
     
     }
     })
-}
+
 /* }
  */
 
-document.addEventListener('keydown',function(event){
-    if (event.key==="Enter" && !gameStarted){
-        IniciarJuego()
-    }
-})
