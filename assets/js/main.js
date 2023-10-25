@@ -5,6 +5,225 @@ canvas.height=576
 
 const gravedad= 0.5
 
+
+function MapaJuego(){
+    const tileSize =50;
+    const playerSize = 30;
+const player ={
+    x:50,
+    y:50,
+    width:30,
+    height:30,
+    speed:10
+}
+/* const Bloque ={
+    x:200,
+    y:200,
+    width:50,
+    height:50
+} */
+
+/* const camino = [
+    { x: 50, y: 50 },
+    { x: 100, y: 50 },
+    { x: 150, y: 100 },
+    { x: 150, y: 150 },
+    { x: 100, y: 200 },
+    { x: 50, y: 200 },
+    { x: 50, y: 250 },
+    { x: 100, y: 300 },
+    { x: 150, y: 300 },
+    { x: 200, y: 250 },
+    { x: 250, y: 250 },
+    { x: 300, y: 300 },
+    { x: 350, y: 300 }
+  ];
+ */
+let PlayerEntryBloque =false
+
+const bloqueVerde =new Image()
+bloqueVerde.src='./assets/img/nivel.png'
+
+function Jugador(){
+    ctx.fillStyle='blue';
+    ctx.fillRect(player.x,player.y,player.width,player.height)
+}
+
+function dibujoBloque(){
+ctx.drawImage(bloqueVerde,canvas.width -tileSize,canvas.height-tileSize,tileSize,tileSize)
+
+ 
+}
+/* function dibujarLinea(x1, y1, x2, y2, color) {
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 10;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  
+  function dibujarCamino() {
+    ctx.lineWidth = 5;
+    for (let i = 1; i < camino.length; i++) {
+      const puntoAnterior = camino[i - 1];
+      const puntoActual = camino[i];
+      dibujarLinea(puntoAnterior.x, puntoAnterior.y, puntoActual.x, puntoActual.y, 'yellow');
+    }
+  } */
+function verificarColision(){
+  return player.x +playerSize >=canvas.width -tileSize &&
+        player.y +playerSize>=canvas.height - tileSize;
+}
+
+function keydownHandler(event){
+    if (verificarColision() && event.key ==='Enter'){
+        window.location.href="Nivel 1.html"
+    }
+    let newPlayerX = player.x
+    let newPlayerY = player.y
+
+    switch(event.key){
+        case 'ArrowUp':
+            newPlayerY -= player.speed;
+            break;
+        
+        case 'ArrowDown':
+            newPlayerY += player.speed;
+            break;
+
+        case 'ArrowLeft': 
+        console.log("Izquierda")
+            newPlayerX -= player.speed;
+            break;
+
+        case 'ArrowRight':
+            console.log("Derecha")
+            newPlayerX += player.speed;
+            break;
+    }
+
+    player.x =newPlayerX
+    player.y =newPlayerY
+
+    verificarColision()
+}
+document.addEventListener('keydown',keydownHandler);
+
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+    dibujoBloque()
+   
+    Jugador()
+    requestAnimationFrame(draw)
+}
+draw()
+    /* const map =[
+        [0,0,1,1,1,0,0],
+        [0,0,1,0,1,0,0],
+        [0,0,1,0,1,0,0],
+        [0,0,1,0,0,0,0],
+        [0,0,0,0,1,0,0],
+        
+    ]
+
+    const tileSize =50;
+
+    let playerX=50;
+    let playerY=50;
+    const playerWidth=30;
+    const playerHeight=30;
+    const playerSpeed=1;
+
+    function draw(){
+        for (let y=0;y<map.length;y++){
+            for (let x=0;x<map[y].length;x++){
+                if (map[y][x]===1){
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    ctx.fillStyle='red';
+                    ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
+                }
+            }
+
+        }
+    
+    const playerBottom=playerY + playerHeight;
+    const playerRight = playerX + playerWidth;
+function colisionBloque(){
+    const tileX=Math.floor(playerX/tileSize);
+    const tileY=Math.floor(playerBottom/tileSize);
+
+    if (map[tileY] && map[tileY][tileX]===1){
+        return true;
+    }   
+    return false;
+}
+       
+addEventListener('keydown', ({keyCode}) =>{
+    switch(keyCode){
+        case 38:
+        if (playerY>0){
+            playerY-=playerSpeed;
+        }
+        break;
+
+        case 40:
+        if(playerY<canvas.height-playerHeight){
+            playerY+=playerSpeed;
+        }
+        break;
+        
+        case 37:
+        if(playerX>0){
+            playerX -=playerSpeed
+        }
+        break;
+
+        case 39:
+        if (playerX<canvas.width-playerWidth){
+            playerX +=playerSpeed;
+        }
+        break;
+    }
+    if(event.key==='Enter' && colisionBloque()){
+        window.location.href="Nivel 1.html"
+    }
+})
+
+
+ctx.fillStyle='blue';
+ctx.fillRect(playerX,playerY,playerWidth,playerHeight);
+
+
+requestAnimationFrame(draw);
+
+}
+
+draw();
+*/
+} 
+
+
+/* function bucle(){
+    if(gameState==="MapaJuego") {
+        MapaJuego()
+    }
+    else if(gameState==="iniciarJuego"){
+        IniciarJuego()
+    }
+    requestAnimationFrame(bucle)
+}
+
+bucle()
+ */
+
+MapaJuego()
+
+
+/* function IniciarJuego(){
+   
+
 class Player{
     constructor(){
         this.position={
@@ -72,10 +291,10 @@ return image
 }    
 
 const ImagenSuelo = createImage('./assets/img/Suelo.jpg')
-const FondoJuego =createImage('./assets/img/fondoJuego.jpg')
+const FondoJuego =createImage('/assets/img/fondoCeleste.jpg')
 
 
-/* image.onload=function(){ */
+
     const player= new Player()
 
 const plataforms=[new Plataform({x:-1,y:470,image:ImagenSuelo}),new Plataform({x:500,y:470,image:ImagenSuelo})]
@@ -151,7 +370,7 @@ function animacion(){
 animacion()
 
 addEventListener('keydown', ({keyCode}) => {
-/* console.log(keyCode) */
+console.log(keyCode)
 switch(keyCode){
     case 37:
         console.log('left')
@@ -177,7 +396,7 @@ switch(keyCode){
 })
 
 addEventListener('keyup', ({keyCode}) => {
-    /* console.log(keyCode) */
+    console.log(keyCode)
     switch(keyCode){
         case 37:
             console.log('left')
@@ -202,6 +421,6 @@ addEventListener('keyup', ({keyCode}) => {
     }
     })
 
-/* }
- */
+} */
+
 

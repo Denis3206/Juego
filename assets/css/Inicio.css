@@ -19,7 +19,7 @@ video{
 .imgFondo{
     position:absolute;
     top:0%;
-    left: 25%;
+    left: 30%;
     width: 700px;
     height: 700px;
     animation:bounce2 10s infinite;
@@ -27,7 +27,7 @@ video{
 .texto{
     position: absolute;
     top: 420px;
-    left: 440px;
+    left: 490px;
     font-size: 2vw;
     color:yellow;
     font-family: 'Pixelify Sans', sans-serif;
