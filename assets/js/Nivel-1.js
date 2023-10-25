@@ -78,7 +78,7 @@ function IniciarJuego(){
     }    
     
     let ImagenSuelo = createImage('./assets/img/Plataforma.png')
-    let FondoJuego =createImage('/assets/img/fondoCeleste.jpg')
+    let FondoJuego =createImage('./assets/img/fondoCeleste.jpg')
     let Nubes = createImage('./assets/img/Nubes.png')
     let Arbol = createImage('./assets/img/Arbol.png')
     let SpriteD =createImage('./assets/img/SpriteDerecha.png')
