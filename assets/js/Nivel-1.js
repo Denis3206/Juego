@@ -4,14 +4,50 @@ canvas.width=1024
 canvas.height=576
 
 const gravedad= 1.5
+var vidas=3
+const backgroundMusic=document.getElementById('FondoMusica1')
+
+
+//LOADER
+function drawLoader(){
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+    ctx.beginPath()
+    ctx.arc(canvas.width/2,canvas.height/2,30,0,2*Math.PI)
+    ctx.strokeStyle='green'
+    ctx.lineWidth=5
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.arc(canvas.width/2,canvas.height/2,30,0,2*Math.PI*(Date.now()%2000)/2000)
+    ctx.strokeRect='Red'
+    ctx.lineWidth=5
+    ctx.stroke()
+
+    ctx.font='16px Arial'
+    ctx.fillStyle='White'
+    ctx.textAlign='center'
+    ctx.fillText('Nivel 1', canvas.width/2,canvas.height/2+50)
+
+    if(Date.now() -startTime>=5000){
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+        IniciarJuego()
+        backgroundMusic.play()
+    } else{
+        requestAnimationFrame(drawLoader)
+    }
+}
+const startTime=Date.now()
+drawLoader()
 
 function IniciarJuego(){
+    
    
+//PAUSA
 
 
+//JUEGO
     class Player{
         constructor(){
-            this.speed =10 
+            this.speed =10
             this.position={
                 x:100,
                 y:100
@@ -20,16 +56,40 @@ function IniciarJuego(){
                 x:0,
                 y:0
             }
-            this.width =30
-            this.height=30
-            this.image =SpriteD
+            this.width =200
+            this.height=200
+            this.image =Sprite
+            this.frames = 0
+            this.sprites ={
+                stand:{
+                    right:Sprite,
+                    cropwidth:348
+                },
+                run:{
+                    right:SpriteDRun,
+                    cropwidth:272
+                }
+            }
+            this.currentSprite= this.sprites.stand.right
+            this.currentCropWidth =348
         }
          drawPlayer(){
-            ctx.drawImage(this.image,this.position.x, this.position.y,this.image.width,this.image.height)
+            ctx.drawImage(
+                this.currentSprite,
+                this.currentCropWidth* this.frames,
+                0,
+                this.currentCropWidth,
+                239,
+                this.position.x, 
+                this.position.y,
+                this.width,
+                this.height)
            
             
         }
          update(){
+            this.frames++
+            if(this.frames >3) this.frames=0
             this.drawPlayer()
             this.position.x +=this.velocity.x
             this.position.y +=this.velocity.y
@@ -78,11 +138,11 @@ function IniciarJuego(){
     }    
     
     let ImagenSuelo = createImage('./assets/img/Plataforma.png')
-    let FondoJuego =createImage('/assets/img/fondoCeleste.jpg')
+    let FondoJuego =createImage('./assets/img/fondoCeleste.jpg')
     let Nubes = createImage('./assets/img/Nubes.png')
     let Arbol = createImage('./assets/img/Arbol.png')
-    let SpriteD =createImage('./assets/img/SpriteDerecha.png')
-    let SpriteI =createImage('./assets/img/SpriteIzquierda.png')
+    let Sprite =createImage('./assets/img/SpriteInicial.png')
+    let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
 
     let player= new Player()
     
@@ -122,7 +182,7 @@ function IniciarJuego(){
     ]
     
     
-    const keys ={
+    let keys ={
         right:{
             pressed:false
         },
@@ -240,15 +300,23 @@ function IniciarJuego(){
                 player.velocity.y=0
             }
         })
-
+//META
         if (ScrollOffset > 1000 ){
             console.log('Ganaste')
         }
-
+//PERDISTE VIDA
         if (player.position.y>canvas.height){
+            vidas--;
             init()
+            if (vidas<0){
+                alert("GAME OVER")
+                window.location.href="index.html"
+            }
         }
-
+        ctx.font = '24px Arial';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'left';
+        ctx.fillText('Vidas: ' + vidas, 20, 30);
     }
     animacion()
     
@@ -268,6 +336,8 @@ function IniciarJuego(){
         case 39:
             console.log('right')
            keys.right.pressed=true
+           player.currentSprite =player.sprites.run.right
+           player.currentCropWidth =player.sprites.run.cropwidth
         break;
     
         case 38: 
@@ -305,4 +375,4 @@ function IniciarJuego(){
         })
     
     }
-    IniciarJuego()
+   
