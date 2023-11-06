@@ -15,6 +15,11 @@ video{
     width:100%;
     height:auto;
     padding-bottom: 56.25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 .imgFondo{
     position:absolute;
@@ -23,6 +28,7 @@ video{
     width: 700px;
     height: 700px;
     animation:bounce2 10s infinite;
+    
 }
 .texto{
     position: absolute;
@@ -33,6 +39,7 @@ video{
     font-family: 'Pixelify Sans', sans-serif;
     font-weight: bold;
     animation:bounce 1s infinite;
+    text-align: center;
 }
 @media (max-width:768px){
     .imgFondo, .texto{

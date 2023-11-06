@@ -2,11 +2,12 @@ const canvas =document.querySelector('canvas');
 const ctx= canvas.getContext('2d');
 canvas.width=1024
 canvas.height=576
-
+let gameState='loading'
 const gravedad= 1.5
 var vidas=3
 const backgroundMusic=document.getElementById('FondoMusica1')
-
+const salto= document.getElementById('salto')
+const perder = document.getElementById('gameover')
 
 //LOADER
 function drawLoader(){
@@ -28,6 +29,7 @@ function drawLoader(){
     ctx.fillText('Nivel 1', canvas.width/2,canvas.height/2+50)
 
     if(Date.now() -startTime>=5000){
+        gameState='playing'
         ctx.clearRect(0,0,canvas.width,canvas.height)
         IniciarJuego()
         backgroundMusic.play()
@@ -38,9 +40,9 @@ function drawLoader(){
 const startTime=Date.now()
 drawLoader()
 
+
+
 function IniciarJuego(){
-    
-   
 //PAUSA
 
 
@@ -56,22 +58,25 @@ function IniciarJuego(){
                 x:0,
                 y:0
             }
-            this.width =200
-            this.height=200
+            this.width =66
+            this.height=150
             this.image =Sprite
             this.frames = 0
             this.sprites ={
                 stand:{
                     right:Sprite,
-                    cropwidth:348
+                    left:SpriteI,
+                    cropwidth:110
                 },
                 run:{
                     right:SpriteDRun,
-                    cropwidth:272
+                    left:SpriteIRun,
+                    cropwidth:130
                 }
             }
             this.currentSprite= this.sprites.stand.right
-            this.currentCropWidth =348
+            this.currentCropWidth =110
+            
         }
          drawPlayer(){
             ctx.drawImage(
@@ -79,7 +84,7 @@ function IniciarJuego(){
                 this.currentCropWidth* this.frames,
                 0,
                 this.currentCropWidth,
-                239,
+                165,
                 this.position.x, 
                 this.position.y,
                 this.width,
@@ -87,9 +92,16 @@ function IniciarJuego(){
            
             
         }
-         update(){
+       
+        update(){
             this.frames++
-            if(this.frames >3) this.frames=0
+            if(this.frames >28 && (this.currentSprite===this.sprites.stand.right || this.sprites.stand.left)) 
+            this.frames=1
+            else if(
+                this.frames>29 && (this.currentSprite===this.sprites.run.right || this.currentSprite===this.sprites.run.left)
+            )
+            this.frames=1
+
             this.drawPlayer()
             this.position.x +=this.velocity.x
             this.position.y +=this.velocity.y
@@ -97,10 +109,125 @@ function IniciarJuego(){
             if (this.position.y + this.height + this.velocity.y <= canvas.height)
             this.velocity.y +=gravedad
             
+           
         }
+       
     
     }
+
     
+    
+class Enemy{
+   
+        constructor({ x, y, width, height, image }) {
+            this.position = {
+                x: x,
+                y: y
+            };
+            this.width = width;
+            this.height = height;
+            this.image = image;
+            this.frames = 0;
+            this.sprites = {
+                stand: {
+                    right: image,
+                    cropwidth: width
+                }
+            };
+            this.currentSprite = this.sprites.stand.right;
+            this.currentCropWidth = width;
+            this.IsAlive = true;
+            this.velocity = {
+                x: -2,
+                y: 0
+            };
+            this.movementCounter = 0;
+            this.velocityY=0
+        }
+    draw(){
+       
+        if(this.IsAlive){
+              let IsonPlatform = false
+              for(let plataform of plataforms){
+                if(this.position.x < plataform.position.x + plataform.image.width &&
+                    this.position.x + this.width > plataform.position.x &&
+                    this.position.y < plataform.position.y +plataform.image.height &&
+                    this.position.y + this.height > plataform.position.y)
+                    {
+                        IsonPlatform=true
+                        break;
+                    }
+              }
+              if(!IsonPlatform){
+                this.velocityY +=1
+                if (this.position.y>canvas.height){
+                    this.IsAlive=false
+                }  
+            }else{
+                this.velocityY=0
+                
+              }
+                this.position.y +=this.velocityY
+              }
+             ctx.drawImage( 
+                this.currentSprite,
+                this.frames*this.width,
+                0,
+                this.width,
+                this.height,
+                this.position.x,
+                this.position.y,
+                this.width,
+                this.height
+            )
+          
+            
+            this.movementCounter++
+            if(this.movementCounter>=10){
+                this.frames++
+                this.movementCounter=0
+            }
+            if(this.frames >=this.image.width /this.width){
+                this.frames=0
+            }
+            this.position.x+=this.velocity.x
+        
+       
+       
+    }
+
+    checkColision(player){
+        if(player.position.x < this.position.x + this.width &&
+            player.position.x +player.width>this.position.x &&
+            player.position.y <this.position.y + this.height &&
+            player.position.y +player.height>this.position.y
+            ){
+                if(player.position.y < this.position.y){
+                    vidas--
+                    if(vidas<=0){
+                        gameState='gameOver'
+                        GameOver=false
+                    }else{
+                        init()
+                    }
+                    }
+                }/* else if(player.position.x<this.position.x){
+                    vidas--
+                    init()
+                }
+                else if(player.position.x +player.width > this.position.x+this.width){
+                    vidas--
+                    init()
+                }
+                else {
+                    vidas--
+                    init()
+                } */
+            }
+    }
+
+
+
     class Plataform{
         constructor({x,y,image}){
             this.position={
@@ -137,12 +264,42 @@ function IniciarJuego(){
     return image
     }    
     
-    let ImagenSuelo = createImage('./assets/img/Plataforma.png')
+    let ImagenSuelo = createImage('./assets/img/PlataformaG.png')
+    let ImagenSueloP = createImage('./assets/img/Plataforma.png')
     let FondoJuego =createImage('./assets/img/fondoCeleste.jpg')
     let Nubes = createImage('./assets/img/Nubes.png')
     let Arbol = createImage('./assets/img/Arbol.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
+    let SpriteI =createImage('./assets/img/Spriteiniciali.png')
+    let SpriteIRun=createImage('./assets/img/SpriteIRun.png')
+    let Enemie1 =createImage('./assets/img/Enemie1.png')
+
+
+
+let enemigo1=[
+    new Enemy({
+       x:600,
+        y:100,
+        width:50,
+        height:50,
+        image:Enemie1
+    }),
+    new Enemy({
+        x:1700,
+         y:100,
+         width:50,
+         height:50,
+         image:Enemie1
+     }),
+     new Enemy({
+        x:3500,
+         y:100,
+         width:50,
+         height:50,
+         image:Enemie1
+     })
+]
 
     let player= new Player()
     
@@ -152,10 +309,31 @@ function IniciarJuego(){
         image:ImagenSuelo
     }),
     new Plataform({
-        x:299,
+        x:1200,
         y:470,
         image:ImagenSuelo
-    })]
+    }),
+    new Plataform({
+        x:2400,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:2800,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:3200,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:3600,
+        y:470,
+        image:ImagenSuelo
+    })
+    ]
     
     
     ///Objetos del juego
@@ -195,7 +373,29 @@ function IniciarJuego(){
     
 
     function init(){
-    
+        enemigo1=[
+            new Enemy({
+               x:600,
+                y:100,
+                width:50,
+                height:50,
+                image:Enemie1
+            }),
+            new Enemy({
+                x:1700,
+                 y:100,
+                 width:50,
+                 height:50,
+                 image:Enemie1
+             }),
+             new Enemy({
+                x:3500,
+                 y:100,
+                 width:50,
+                 height:50,
+                 image:Enemie1
+             })
+        ]
      player= new Player()
      plataforms=[new Plataform({
         x:-1,
@@ -203,10 +403,31 @@ function IniciarJuego(){
         image:ImagenSuelo
     }),
     new Plataform({
-        x:299,
+        x:1200,
         y:470,
         image:ImagenSuelo
-    })]
+    }),
+    new Plataform({
+        x:2400,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:2800,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:3200,
+        y:470,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:3600,
+        y:470,
+        image:ImagenSuelo
+    })
+]
     
     
     ///Objetos del juego
@@ -250,74 +471,114 @@ function IniciarJuego(){
         ctx.fillStyle='white'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.drawImage(FondoJuego, 0, 0, canvas.width, canvas.height);
-        genericObjects.forEach((genericObject)=>{
-            genericObject.draw()
-        })
-    
-      
-        plataforms.forEach((plataform)=>{
-            plataform.draw()
-        })
-        player.update()  
-    
-        if (keys.right.pressed && player.position.x<400){
-            player.velocity.x= player.speed
-        }else if((keys.left.pressed && player.position.x>100)||
-         (keys.left.pressed && ScrollOffset === 0 && player.position.x >0)){
-            player.velocity.x=-player.speed
-        }else {
-           player.velocity.x=0 
-    
-           if (keys.right.pressed){
-            ScrollOffset +=player.speed
+//Jugando
+        if (gameState==='loading'){
+            drawLoader()
+        }else if(gameState==='playing'){
 
-            plataforms.forEach((plataform)=>{
-                plataform.position.x-=player.speed
-            })
            
             genericObjects.forEach((genericObject)=>{
-                genericObject.position.x -= player.speed * 0.66
+                genericObject.draw()
             })
-
-           }else if (keys.left.pressed && ScrollOffset > 0){
-            ScrollOffset -=player.speed
-            plataforms.forEach((plataform)=>{
-                plataform.position.x += player.speed
-            })
+            
           
-            genericObjects.forEach((genericObject)=>{
-                genericObject.position.x += player.speed * 0.66
+            plataforms.forEach((plataform)=>{
+                plataform.draw()
             })
-           }
-        }
-        plataforms.forEach((plataform)=>{
-        if (player.position.y + player.height <=
-            plataform.position.y && player.position.y + player.height+player.velocity.y>=
-            plataform.position.y && player.position.x + player.width>=
-            plataform.position.x && player.position.x <=
-            plataform.position.x+plataform.image.width)
-            {
-                player.velocity.y=0
-            }
+            player.update()  
+
+            enemigo1.forEach((enemigo)=>{
+                enemigo.draw()
+                enemigo.checkColision(player)
         })
-//META
-        if (ScrollOffset > 1000 ){
-            console.log('Ganaste')
-        }
-//PERDISTE VIDA
-        if (player.position.y>canvas.height){
-            vidas--;
-            init()
-            if (vidas<0){
-                alert("GAME OVER")
-                window.location.href="index.html"
+            
+
+            if (keys.right.pressed && player.position.x<400){
+                player.velocity.x= player.speed
+            }else if((keys.left.pressed && player.position.x>100)||
+             (keys.left.pressed && ScrollOffset === 0 && player.position.x >0)){
+                player.velocity.x=-player.speed
+            }else {
+               player.velocity.x=0 
+        
+               if (keys.right.pressed){
+                ScrollOffset +=player.speed
+    
+                plataforms.forEach((plataform)=>{
+                    plataform.position.x-=player.speed
+                })
+               
+                genericObjects.forEach((genericObject)=>{
+                    genericObject.position.x -= player.speed * 0.66
+                })
+    
+                enemigo1.forEach((enemigo)=>{
+                    enemigo.position.x-=player.speed
+                })
+               }else if (keys.left.pressed && ScrollOffset > 0){
+                ScrollOffset -=player.speed
+                plataforms.forEach((plataform)=>{
+                    plataform.position.x += player.speed
+                })
+              
+                genericObjects.forEach((genericObject)=>{
+                    genericObject.position.x += player.speed * 0.66
+                })
+               }
             }
+            plataforms.forEach((plataform)=>{
+            if (player.position.y + player.height <=
+                plataform.position.y && player.position.y + player.height+player.velocity.y>=
+                plataform.position.y && player.position.x + player.width>=
+                plataform.position.x && player.position.x <=
+                plataform.position.x+plataform.image.width)
+                {
+                    player.velocity.y=0
+                }
+            })
+           
+            
+    //META
+            if (ScrollOffset > 5000 ){
+                console.log('Ganaste')
+            }
+    //PERDISTE VIDA
+            if (player.position.y>canvas.height){
+                vidas--;
+                if (vidas<=0){
+                   gameState='gameOver'
+                    GameOver=false
+                }else{
+                    init()
+                }
+                
+               
+            }
+            ctx.font = '24px Arial';
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'left';
+            ctx.fillText('Vidas: ' + vidas, 20, 30);
         }
-        ctx.font = '24px Arial';
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'left';
-        ctx.fillText('Vidas: ' + vidas, 20, 30);
-    }
+        //GAME OVER
+        else if(gameState==='gameOver'){
+            backgroundMusic.pause()
+            perder.play()
+            ctx.font='100px Pixelify Sans, sans-serif'
+            ctx.fillStyle='red'
+            ctx.textAlign='center'
+            if(Date.now()%1000<500){
+            ctx.fillText('Game Over',canvas.width/2,canvas.height/2-50)
+            }
+ 
+            ctx.font='24px Arial'
+            ctx.fillText('Presiona r para reiniciar',canvas.width/2,canvas.height/2+50)
+            
+        }
+        
+        }
+        
+    
+
     animacion()
     
     addEventListener('keydown', ({keyCode}) => {
@@ -326,6 +587,8 @@ function IniciarJuego(){
         case 37:
             console.log('left')
             keys.left.pressed=true
+             player.currentSprite =player.sprites.run.left
+           player.currentCropWidth =player.sprites.run.cropwidth
         break;
     
         case 40: 
@@ -342,10 +605,19 @@ function IniciarJuego(){
     
         case 38: 
             console.log('up')
+            salto.play()
             player.velocity.y -=20
             break;
-    
+
+        case 82:
+            if (gameState==='gameOver'){
+                window.location.href="index.html"
+                vidas=3
+            }
+
+            break; 
     }
+   
     })
     
     addEventListener('keyup', ({keyCode}) => {
@@ -354,6 +626,8 @@ function IniciarJuego(){
             case 37:
                 console.log('left')
                 keys.left.pressed=false
+                player.currentSprite =player.sprites.stand.left
+                player.currentCropWidth =player.sprites.stand.cropwidth 
             break;
         
             case 40: 
@@ -363,7 +637,9 @@ function IniciarJuego(){
         
             case 39:
                 console.log('right')
-                keys.right.pressed=false            
+                keys.right.pressed=false   
+                player.currentSprite =player.sprites.stand.right
+                player.currentCropWidth =player.sprites.stand.cropwidth         
             break;
         
             case 38: 
