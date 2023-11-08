@@ -5,9 +5,13 @@ canvas.height=576
 let gameState='loading'
 const gravedad= 1.5
 var vidas=3
+var Monedas=0
 const backgroundMusic=document.getElementById('FondoMusica1')
 const salto= document.getElementById('salto')
 const perder = document.getElementById('gameover')
+let paused = false
+
+
 
 //LOADER
 function drawLoader(){
@@ -76,8 +80,25 @@ function IniciarJuego(){
             }
             this.currentSprite= this.sprites.stand.right
             this.currentCropWidth =110
-            
+            this.coins =[]
         }
+        agregarMoneda(x,y){
+            const moneda = new Coins(x,y)
+            this.coins.push(moneda)
+        }
+        recogerMonedas(){
+            for (let i= this.coins.length-1; i>=0;i--){
+                const moneda =this.coins[i]
+                if(this.position.x < moneda.position.x + moneda.width &&
+                    this.position.x + this.width > moneda.position.x &&
+                    this.position.y < moneda.position.y +moneda.height &&
+                    this.position.y + this.height > moneda.position.y)
+                    {
+                        this.coins.splice(i,1)
+                    }
+            }
+        }
+
          drawPlayer(){
             ctx.drawImage(
                 this.currentSprite,
@@ -211,21 +232,61 @@ class Enemy{
                         init()
                     }
                     }
-                }/* else if(player.position.x<this.position.x){
-                    vidas--
-                    init()
                 }
-                else if(player.position.x +player.width > this.position.x+this.width){
-                    vidas--
-                    init()
-                }
-                else {
-                    vidas--
-                    init()
-                } */
             }
     }
 
+    //GANASTE
+class final{
+    constructor({x,y,width,height,image}){
+        this.position={
+            x,
+            y
+        }
+        this.width = width;
+        this.height = height;
+        this.image= image
+        
+        this.velocityY=0
+    }
+    draw(){
+        let IsonPlatform = false
+              for(let plataform of plataforms){
+                if(this.position.x < plataform.position.x + plataform.image.width &&
+                    this.position.x + this.width > plataform.position.x &&
+                    this.position.y < plataform.position.y +plataform.image.height &&
+                    this.position.y + this.height > plataform.position.y)
+                    {
+                        IsonPlatform=true
+                        break;
+                    }
+              }
+              if(!IsonPlatform){
+                this.velocityY +=1
+            }else{
+                this.velocityY=0
+                
+              }
+                this.position.y +=this.velocityY
+
+            
+
+        ctx.drawImage(this.image,this.position.x, this.position.y,this.width,this.height)
+    }
+    ColisionFinal(player){
+        if(player.position.x < this.position.x + this.width &&
+            player.position.x +player.width>this.position.x &&
+            player.position.y <this.position.y + this.height &&
+            player.position.y +player.height>this.position.y
+            ){
+                if(player.position.y < this.position.y){
+                   localStorage.setItem('vidas',vidas)
+                   localStorage.setItem('Monedas',Monedas)
+                   window.location.href="Nivel 2.html"
+                    }
+                }
+    }
+}
 
 
     class Plataform{
@@ -243,6 +304,8 @@ class Enemy{
         }
     }
     
+    
+
     class GenericObject{
         constructor({x,y,image}){
             this.position={
@@ -258,6 +321,59 @@ class Enemy{
         }
     }
     
+    class Coins{
+        constructor({x,y,width,height,image}){
+            this.position={
+                x,
+                y
+            }
+            this.width = width;
+            this.height = height;
+            this.image= image
+            this.colisionada=false
+            this.velocityY=0
+           
+        }
+        draw(){
+            if(!this.colisionada){
+            let IsonPlatform = false
+                  for(let plataform of plataforms){
+                    if(this.position.x < plataform.position.x + plataform.image.width &&
+                        this.position.x + this.width > plataform.position.x &&
+                        this.position.y < plataform.position.y +plataform.image.height &&
+                        this.position.y + this.height > plataform.position.y)
+                        {
+                            IsonPlatform=true
+                            break;
+                        }
+                  }
+                  if(!IsonPlatform){
+                    this.velocityY +=1
+                }else{
+                    this.velocityY=0
+                    
+                  }
+                    this.position.y +=this.velocityY
+    
+                    ctx.drawImage(this.image,this.position.x, this.position.y,this.width,this.height)
+                }
+            
+        }
+        ColisionFinal(player){
+            if(!this.colisionada && player.position.x < this.position.x + this.image.width &&
+                player.position.x +player.width>this.position.x &&
+                player.position.y <this.position.y + this.image.height &&
+                player.position.y +player.height>this.position.y
+                ){
+                    if(player.position.y < this.position.y){
+                       Monedas++
+                        this.colisionada=true
+                        }
+                    }
+        }
+    }
+    
+
     function createImage(ImageSrc){
         const image =new Image()
         image.src=ImageSrc
@@ -274,8 +390,20 @@ class Enemy{
     let SpriteI =createImage('./assets/img/Spriteiniciali.png')
     let SpriteIRun=createImage('./assets/img/SpriteIRun.png')
     let Enemie1 =createImage('./assets/img/Enemie1.png')
+    let BanderaFinal = createImage('./assets/img/Final.png')
+    let monedas = createImage('./assets/img/monedas.png')
 
 
+    
+let moned = [
+    new Coins({
+        x:1250,
+        y:100,
+        width:40,
+        height:40,
+        image:monedas
+    })
+]
 
 let enemigo1=[
     new Enemy({
@@ -293,7 +421,7 @@ let enemigo1=[
          image:Enemie1
      }),
      new Enemy({
-        x:3500,
+        x:2100,
          y:100,
          width:50,
          height:50,
@@ -302,7 +430,18 @@ let enemigo1=[
 ]
 
     let player= new Player()
-    
+
+
+    let Bandera =[new final({
+        x:5200,
+        y:100,
+        width:40,
+        height:46,
+        image:BanderaFinal
+    })
+
+    ]
+
     let plataforms=[new Plataform({
         x:-1,
         y:470,
@@ -332,7 +471,28 @@ let enemigo1=[
         x:3600,
         y:470,
         image:ImagenSuelo
+    }),
+    new Plataform({
+        x:4800,
+        y:470,
+        image:ImagenSuelo
+    }),
+    new Plataform({
+        x:1200,
+        y:367,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:1700,
+        y:300,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:1200,
+        y:170,
+        image:ImagenSueloP
     })
+
     ]
     
     
@@ -373,6 +533,7 @@ let enemigo1=[
     
 
     function init(){
+       
         enemigo1=[
             new Enemy({
                x:600,
@@ -389,7 +550,7 @@ let enemigo1=[
                  image:Enemie1
              }),
              new Enemy({
-                x:3500,
+                x:2100,
                  y:100,
                  width:50,
                  height:50,
@@ -397,6 +558,15 @@ let enemigo1=[
              })
         ]
      player= new Player()
+
+     Bandera =[new final({
+        x:5200,
+        y:100,
+        width:40,
+        height:46,
+        image:BanderaFinal
+    })]
+
      plataforms=[new Plataform({
         x:-1,
         y:470,
@@ -426,6 +596,26 @@ let enemigo1=[
         x:3600,
         y:470,
         image:ImagenSuelo
+    }),
+    new Plataform({
+        x:4800,
+        y:470,
+        image:ImagenSuelo
+    }),
+    new Plataform({
+        x:1200,
+        y:367,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:1700,
+        y:300,
+        image:ImagenSueloP
+    }),
+    new Plataform({
+        x:1200,
+        y:170,
+        image:ImagenSueloP
     })
 ]
     
@@ -449,6 +639,12 @@ let enemigo1=[
             y:190,
             image: Arbol
             
+        }),
+        new GenericObject({
+            x:1200,
+            y:190,
+            image: Arbol
+            
         })
 
     ]
@@ -467,6 +663,16 @@ let enemigo1=[
 }
     
     function animacion(){
+        if(paused){
+            ctx.font ='48px Arial'
+            ctx.fillStyle= 'black'
+            ctx.textAlign='center'
+            ctx.fillText('Juego en pausa', canvas.width/2, canvas.height/2 -50)
+            ctx.font = '24px Arial'
+            ctx.fillText('Presiona P para reanudar', canvas.width/ 2, canvas.height / 2 +50)
+            return;
+        }
+        if(!paused){
         requestAnimationFrame(animacion)
         ctx.fillStyle='white'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -491,7 +697,15 @@ let enemigo1=[
                 enemigo.draw()
                 enemigo.checkColision(player)
         })
-            
+            Bandera.forEach((Bfinal)=>{
+            Bfinal.draw()
+            Bfinal.ColisionFinal(player)
+        })
+        moned.forEach((mon)=>{
+            mon.draw()
+            mon.ColisionFinal(player)
+        })
+           
 
             if (keys.right.pressed && player.position.x<400){
                 player.velocity.x= player.speed
@@ -515,6 +729,14 @@ let enemigo1=[
                 enemigo1.forEach((enemigo)=>{
                     enemigo.position.x-=player.speed
                 })
+                Bandera.forEach((Bfinal)=>{
+                    Bfinal.position.x-=player.speed
+                })
+                moned.forEach((mon)=>{
+                    mon.position.x -=player.speed
+                })
+                   
+               
                }else if (keys.left.pressed && ScrollOffset > 0){
                 ScrollOffset -=player.speed
                 plataforms.forEach((plataform)=>{
@@ -524,6 +746,16 @@ let enemigo1=[
                 genericObjects.forEach((genericObject)=>{
                     genericObject.position.x += player.speed * 0.66
                 })
+                enemigo1.forEach((enemigo)=>{
+                    enemigo.position.x+=player.speed
+                })
+                Bandera.forEach((Bfinal)=>{
+                    Bfinal.position.x+=player.speed
+                })
+                moned.forEach((mon)=>{
+                    mon.position.x +=player.speed
+                })
+                   
                }
             }
             plataforms.forEach((plataform)=>{
@@ -555,9 +787,14 @@ let enemigo1=[
                
             }
             ctx.font = '24px Arial';
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = 'white';
             ctx.textAlign = 'left';
             ctx.fillText('Vidas: ' + vidas, 20, 30);
+
+            ctx.font = '24px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'right';
+            ctx.fillText('Coins: ' + Monedas, 1000, 30);
         }
         //GAME OVER
         else if(gameState==='gameOver'){
@@ -574,13 +811,14 @@ let enemigo1=[
             ctx.fillText('Presiona r para reiniciar',canvas.width/2,canvas.height/2+50)
             
         }
-        
+    }
         }
         
     
 
     animacion()
     
+    let haSaltado = false
     addEventListener('keydown', ({keyCode}) => {
     /* console.log(keyCode) */
     switch(keyCode){
@@ -605,8 +843,22 @@ let enemigo1=[
     
         case 38: 
             console.log('up')
-            salto.play()
-            player.velocity.y -=20
+            if(!haSaltado){
+                salto.play()
+                player.velocity.y -=20
+                haSaltado=true
+            }
+            
+            break;
+
+        case 80:
+
+        if(!paused){
+            paused=true
+        }else{
+            paused=!paused
+        }
+            
             break;
 
         case 82:
@@ -614,6 +866,11 @@ let enemigo1=[
                 window.location.href="index.html"
                 vidas=3
             }
+            if (!paused){
+                init();
+                paused=false
+            }
+          
 
             break; 
     }
@@ -644,11 +901,10 @@ let enemigo1=[
         
             case 38: 
                 console.log('up')
-                
+                haSaltado=false                
                 break;
         
         }
         })
     
     }
-   

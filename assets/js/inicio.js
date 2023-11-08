@@ -1,4 +1,4 @@
-const fondomusic =document.getElementById('FondoInicio')
+let fondomusic =document.getElementById('FondoInicio')
 fondomusic.play()
 document.addEventListener('keydown',function(event){
     if (event.key==="Enter"){
