@@ -6,6 +6,7 @@ let gameState='loading'
 const gravedad= 1.5
 var vidas=localStorage.getItem('vidas')
 var Monedas=localStorage.getItem('Monedas')
+let timepoLimite = 180
 const backgroundMusic=document.getElementById('FondoMusica1')
 const salto= document.getElementById('salto')
 const perder = document.getElementById('gameover')
@@ -53,7 +54,7 @@ function IniciarJuego(){
             this.speed =10
             this.position={
                 x:100,
-                y:100
+                y:50
             }
             this.velocity={
                 x:0,
@@ -226,7 +227,9 @@ class Enemy{
                 } */
             }
     }
-
+    
+    
+    
     //GANASTE
 class final{
     constructor({x,y,width,height,image}){
@@ -385,147 +388,41 @@ class final{
 
 
     let moned = [
-        new Coins({
-            x:1250,
-            y:100,
-            width:40,
-            height:40,
-            image:monedas
-        }),
-        new Coins({
-            x:1200,
-            y:100,
-            width:40,
-            height:40,
-            image:monedas
-        }),
-        new Coins({
-            x:1700,
-            y:100,
-            width:40,
-            height:40,
-            image:monedas
-        }),
-        new Coins({
-            x:1900,
-            y:100,
-            width:40,
-            height:40,
-            image:monedas
-        }),
+        new Coins({x:1250, y:100, width:40, height:40,image:monedas}),
+        new Coins({x:1200, y:100, width:40, height:40,image:monedas}),
+        new Coins({x:1700, y:100, width:40, height:40, image:monedas}),
+        new Coins({x:1900, y:100, width:40, height:40,image:monedas}),
 
     ]
 let enemigo1=[
-    new Enemy({
-       x:600,
-        y:100,
-        width:50,
-        height:50,
-        image:Enemie1
-    }),
-    new Enemy({
-        x:1700,
-         y:100,
-         width:50,
-         height:50,
-         image:Enemie1
-     }),
-     new Enemy({
-        x:2100,
-         y:100,
-         width:50,
-         height:50,
-         image:Enemie1
-     })
+    new Enemy({x:600, y:100, width:50, height:50, image:Enemie1}),
+    new Enemy({x:1700, y:100, width:50, height:50,image:Enemie1})
 ]
 
     let player= new Player()
     
-    let Bandera =[new final({
-        x:5200,
-        y:100,
-        width:40,
-        height:46,
-        image:BanderaFinal
-    })
+    let Bandera =[new final({x:5200, y:100, width:40, height:46, image:BanderaFinal})
 
     ]
 
-    let plataforms=[new Plataform({
-        x:-1,
-        y:250,
-        image:ImagenSuelo
-    }),
-    /* new Plataform({
-        x:1200,
-        y:470,
-        image:ImagenSuelo
-    }), */
-    new Plataform({
-        x:2400,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:2800,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3200,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3600,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:4800,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1700,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1900,
-        y:250,
-        image:ImagenSueloP
-    })
+    let plataforms=[
+    new Plataform({x:-1, y:250, image:ImagenSuelo}),
+    new Plataform({x:2400, y:250, image:ImagenSueloP}),
+    new Plataform({x:2800, y:250, image:ImagenSueloP}),
+    new Plataform({x:3200, y:250, image:ImagenSueloP}),
+    new Plataform({x:3600, y:470, image:ImagenSuelo}),
+    new Plataform({x:4800, y:470, image:ImagenSuelo}),
+    new Plataform({x:1200, y:250, image:ImagenSueloP}),
+    new Plataform({x:1700, y:250, image:ImagenSueloP}),
+    new Plataform({x:1900, y:250, image:ImagenSueloP})
 
     ]
     
     
     ///Objetos del juego
     let genericObjects= [
-        new GenericObject({
-            x:100,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:500,
-            y:50,
-            image: Nubes
-            
-        }),
-        /* new GenericObject({
-            x:100,
-            y:190,
-            image: Arbol
-            
-        }) */
-
+        new GenericObject({x:100, y:50, image: Nubes}),
+        new GenericObject({x:500, y:50, image: Nubes}),
     ]
     
     
@@ -542,128 +439,40 @@ let enemigo1=[
     
 
     function init(){
-         moned = [
-            new Coins({
-                x:1250,
-                y:100,
-                width:40,
-                height:40,
-                image:monedas
-            })
+        moned = [
+            new Coins({x:1250, y:100, width:40, height:40,image:monedas}),
+            new Coins({x:1200, y:100, width:40, height:40,image:monedas}),
+            new Coins({x:1700, y:100, width:40, height:40, image:monedas}),
+            new Coins({x:1900, y:100, width:40, height:40,image:monedas}),
+    
         ]
         enemigo1=[
-            new Enemy({
-               x:600,
-                y:100,
-                width:50,
-                height:50,
-                image:Enemie1
-            }),
-            new Enemy({
-                x:1700,
-                 y:100,
-                 width:50,
-                 height:50,
-                 image:Enemie1
-             }),
-             new Enemy({
-                x:2100,
-                 y:100,
-                 width:50,
-                 height:50,
-                 image:Enemie1
-             })
+            new Enemy({x:600, y:100, width:50, height:50, image:Enemie1}),
+            new Enemy({x:1700, y:100, width:50, height:50,image:Enemie1})
         ]
      player= new Player()
 
-     Bandera =[new final({
-        x:5200,
-        y:100,
-        width:40,
-        height:46,
-        image:BanderaFinal
-    })]
+     Bandera =[new final({x:5200, y:100, width:40, height:46, image:BanderaFinal})
+     ]
 
-    plataforms=[new Plataform({
-        x:-1,
-        y:250,
-        image:ImagenSuelo
-    }),
-    /* new Plataform({
-        x:1200,
-        y:470,
-        image:ImagenSuelo
-    }), */
-    new Plataform({
-        x:2400,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:2800,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3200,
-        y:250,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3600,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:4800,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:367,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1700,
-        y:300,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1200,
-        y:170,
-        image:ImagenSueloP
-    })
-]
+     plataforms=[
+        new Plataform({x:-1, y:250, image:ImagenSuelo}),
+        new Plataform({x:2400, y:250, image:ImagenSueloP}),
+        new Plataform({x:2800, y:250, image:ImagenSueloP}),
+        new Plataform({x:3200, y:250, image:ImagenSueloP}),
+        new Plataform({x:3600, y:470, image:ImagenSuelo}),
+        new Plataform({x:4800, y:470, image:ImagenSuelo}),
+        new Plataform({x:1200, y:250, image:ImagenSueloP}),
+        new Plataform({x:1700, y:250, image:ImagenSueloP}),
+        new Plataform({x:1900, y:250, image:ImagenSueloP})
+    
+        ]
     
     
     ///Objetos del juego
-      genericObjects= [
-        new GenericObject({
-            x:100,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:500,
-            y:50,
-            image: Nubes
-            
-        }),
-        /* new GenericObject({
-            x:100,
-            y:190,
-            image: Arbol
-            
-        }),
-        new GenericObject({
-            x:1200,
-            y:190,
-            image: Arbol
-            
-        }) */
-
+    genericObjects= [
+        new GenericObject({x:100, y:50, image: Nubes}),
+        new GenericObject({x:500, y:50, image: Nubes}),
     ]
     
     
@@ -790,6 +599,17 @@ let enemigo1=[
                 }
                 
                
+            }
+
+            let tiempoTranscurrido = Math.floor((Date.now()- timepoInicio)/1000)
+            let tiempoRestante = timepoLimite - tiempoTranscurrido
+
+            ctx.font ='36px  Pixelify Sans, sans-serif'
+            ctx.fillStyle = 'red'
+            ctx.textAlign='right'
+            ctx.fillText('TIEMPO: '+ tiempoRestante , 600,30)
+            if(tiempoRestante<=0){
+                gameState='gameOver'
             }
             ctx.font = '36px Arial';
             ctx.fillStyle = 'black';

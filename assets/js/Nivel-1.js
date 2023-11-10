@@ -6,9 +6,11 @@ let gameState='loading'
 const gravedad= 1.5
 var vidas=3
 var Monedas=0
+let timepoLimite = 180
 const backgroundMusic=document.getElementById('FondoMusica1')
 const salto= document.getElementById('salto')
 const perder = document.getElementById('gameover')
+const money=document.getElementById('Money')
 let paused = false
 
 
@@ -139,7 +141,7 @@ function IniciarJuego(){
     
     
 class Enemy{
-   
+
         constructor({ x, y, width, height, image }) {
             this.position = {
                 x: x,
@@ -165,6 +167,9 @@ class Enemy{
             this.movementCounter = 0;
             this.velocityY=0
         }
+        
+           
+        
     draw(){
        
         if(this.IsAlive){
@@ -190,6 +195,7 @@ class Enemy{
               }
                 this.position.y +=this.velocityY
               }
+             
              ctx.drawImage( 
                 this.currentSprite,
                 this.frames*this.width,
@@ -212,7 +218,7 @@ class Enemy{
                 this.frames=0
             }
             this.position.x+=this.velocity.x
-        
+              
        
        
     }
@@ -235,6 +241,7 @@ class Enemy{
                 }
             }
     }
+    
 
     //GANASTE
 class final{
@@ -288,7 +295,7 @@ class final{
     }
 }
 
-
+//PLATAFORMA
     class Plataform{
         constructor({x,y,image}){
             this.position={
@@ -304,8 +311,59 @@ class final{
         }
     }
     
-    
+    //TRAMPA
+    class trampa{
+        constructor({x,y,width,height,image}){
+            this.position={
+                x,
+                y
+            }
+            this.width = width;
+            this.height = height;  
+            this.image=image
+            this.velocityY=0
+        }
+        draw(){
+            let IsonPlatform = false
+            for(let plataform of plataforms){
+              if(this.position.x < plataform.position.x + plataform.image.width &&
+                  this.position.x + this.width > plataform.position.x &&
+                  this.position.y < plataform.position.y +plataform.image.height &&
+                  this.position.y + this.height > plataform.position.y)
+                  {
+                      IsonPlatform=true
+                      break;
+                  }
+            }
+            if(!IsonPlatform){
+              this.velocityY +=1
+          }else{
+              this.velocityY=0
+              
+            }
+              this.position.y +=this.velocityY
+            ctx.drawImage(this.image,this.position.x, this.position.y,this.image.width,this.image.height)
+        }
+        ColisionTrampa(player){
+            if( player.position.x < this.position.x + this.image.width &&
+                player.position.x +player.width>this.position.x &&
+                player.position.y <this.position.y + this.image.height &&
+                player.position.y +player.height>this.position.y
+                ){
+                    if(player.position.y < this.position.y){
+                        vidas--
+                        if(vidas<=0){
+                            gameState='gameOver'
+                            GameOver=false
+                        }else{
+                            init()
+                        }
 
+                }
+        }
+       
+    }
+    }
     class GenericObject{
         constructor({x,y,image}){
             this.position={
@@ -319,8 +377,10 @@ class final{
             ctx.drawImage(this.image,this.position.x, this.position.y,this.image.width,this.image.height)
            
         }
+       
     }
-    
+
+    //Monedas
     class Coins{
         constructor({x,y,width,height,image}){
             this.position={
@@ -366,7 +426,8 @@ class final{
                 player.position.y +player.height>this.position.y
                 ){
                     if(player.position.y < this.position.y){
-                       Monedas++
+                       money.play()
+                        Monedas++
                         this.colisionada=true
                         }
                     }
@@ -380,10 +441,11 @@ class final{
     return image
     }    
     
+    //Imagenes y sprites
     let ImagenSuelo = createImage('./assets/img/PlataformaG.png')
     let ImagenSueloP = createImage('./assets/img/Plataforma.png')
     let FondoJuego =createImage('./assets/img/fondoCeleste.jpg')
-    let Nubes = createImage('./assets/img/Nubes.png')
+    let Nubes = createImage('./assets/img/Nubes1.png')
     let Arbol = createImage('./assets/img/Arbol.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
@@ -392,131 +454,65 @@ class final{
     let Enemie1 =createImage('./assets/img/Enemie1.png')
     let BanderaFinal = createImage('./assets/img/Final.png')
     let monedas = createImage('./assets/img/monedas.png')
-
+    /* let Enemie2 = createImage('./assets/img/plantaEnemie.png') */
+    let pincho= createImage('./assets/img/trampa.png')
 
     
 let moned = [
-    new Coins({
-        x:1250,
-        y:100,
-        width:40,
-        height:40,
-        image:monedas
-    })
+    new Coins({x:1250,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:1250,y:350,width:40,height:40,image:monedas}),
+    new Coins({x:1800,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:2500,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:2900,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:3300,y:100,width:40,height:40,image:monedas}),
 ]
 
 let enemigo1=[
-    new Enemy({
-       x:600,
-        y:100,
-        width:50,
-        height:50,
-        image:Enemie1
-    }),
-    new Enemy({
-        x:1700,
-         y:100,
-         width:50,
-         height:50,
-         image:Enemie1
-     }),
-     new Enemy({
-        x:2100,
-         y:100,
-         width:50,
-         height:50,
-         image:Enemie1
-     })
+    new Enemy({x:600,y:100,width:50,height:50,image:Enemie1}),
+    new Enemy({x:1700,y:100,width:50,height:50,image:Enemie1}),
+    new Enemy({x:2100,y:100,width:50,height:50,image:Enemie1}),
+   
 ]
 
+let Trampas =[
+    new trampa({x:1300, y:100, width:80, height:25, image:pincho }),
+    new trampa({x:3900, y:100, width:80, height:25, image:pincho }),
+    new trampa({x:4200, y:100, width:80, height:25, image:pincho }),
+    new trampa({x:4900, y:100, width:80, height:25, image:pincho }),
+    new trampa({x:5600, y:100, width:80, height:25, image:pincho }),
+]
     let player= new Player()
 
 
-    let Bandera =[new final({
-        x:5200,
-        y:100,
-        width:40,
-        height:46,
-        image:BanderaFinal
-    })
-
+    let Bandera =[
+        new final({x:6800, y:100,width:40,height:46,image:BanderaFinal})
     ]
 
-    let plataforms=[new Plataform({
-        x:-1,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:2400,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:2800,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3200,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3600,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:4800,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:367,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1700,
-        y:300,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1200,
-        y:170,
-        image:ImagenSueloP
-    })
-
+    let plataforms=[
+    new Plataform({x:-1, y:470, image:ImagenSuelo }),
+    new Plataform({x:1200, y:470, image:ImagenSuelo}),
+    new Plataform({x:1200, y:367, image:ImagenSueloP}),
+    new Plataform({x:1200, y:170, image:ImagenSueloP}),
+    new Plataform({x:1700, y:300, image:ImagenSueloP}),
+    new Plataform({x:2400, y:470, image:ImagenSueloP}),
+    new Plataform({x:2800, y:470, image:ImagenSueloP}),
+    new Plataform({x:3200, y:470, image:ImagenSueloP}),
+    new Plataform({x:3600, y:470, image:ImagenSuelo}),
+    new Plataform({x:4800, y:470, image:ImagenSuelo}),
+    new Plataform({x:5800, y:370, image:ImagenSueloP}),
+    new Plataform({x:6200, y:340, image:ImagenSueloP}),
+    new Plataform({x:6600, y:310, image:ImagenSueloP})
     ]
     
     
     ///Objetos del juego
     let genericObjects= [
-        new GenericObject({
-            x:100,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:500,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:100,
-            y:190,
-            image: Arbol
-            
-        })
-
+        new GenericObject({x:500,y:50,image: Nubes}),
+        new GenericObject({x:-1,y:190,image: Arbol}),
+        new GenericObject({x:100,y:190,image: Arbol}),
+        new GenericObject({x:160,y:190,image: Arbol}),
+        new GenericObject({x:1000,y:190,image: Arbol}),
+        new GenericObject({x:1200,y:190,image: Arbol}),
     ]
     
     
@@ -533,120 +529,60 @@ let enemigo1=[
     
 
     function init(){
-       
-        enemigo1=[
-            new Enemy({
-               x:600,
-                y:100,
-                width:50,
-                height:50,
-                image:Enemie1
-            }),
-            new Enemy({
-                x:1700,
-                 y:100,
-                 width:50,
-                 height:50,
-                 image:Enemie1
-             }),
-             new Enemy({
-                x:2100,
-                 y:100,
-                 width:50,
-                 height:50,
-                 image:Enemie1
-             })
+        moned = [
+            new Coins({x:1250,y:100,width:40,height:40,image:monedas}),
+            new Coins({x:1250,y:350,width:40,height:40,image:monedas}),
+            new Coins({x:1800,y:100,width:40,height:40,image:monedas}),
+            new Coins({x:2500,y:100,width:40,height:40,image:monedas}),
+            new Coins({x:2900,y:100,width:40,height:40,image:monedas}),
+            new Coins({x:3300,y:100,width:40,height:40,image:monedas}),
+            
         ]
-     player= new Player()
+        
+        enemigo1=[
+            new Enemy({x:600,y:100,width:50,height:50,image:Enemie1}),
+            new Enemy({x:1700,y:100,width:50,height:50,image:Enemie1}),
+            new Enemy({x:2100,y:100,width:50,height:50,image:Enemie1})
+        ]
 
-     Bandera =[new final({
-        x:5200,
-        y:100,
-        width:40,
-        height:46,
-        image:BanderaFinal
-    })]
+        Trampas =[
+            new trampa({x:1300, y:100, width:80, height:25, image:pincho }),
+            new trampa({x:3900, y:100, width:80, height:25, image:pincho }),
+            new trampa({x:4200, y:100, width:80, height:25, image:pincho }),
+            new trampa({x:4900, y:100, width:80, height:25, image:pincho }),
+            new trampa({x:5600, y:100, width:80, height:25, image:pincho }),
+        ]
 
-     plataforms=[new Plataform({
-        x:-1,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:2400,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:2800,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3200,
-        y:470,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:3600,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:4800,
-        y:470,
-        image:ImagenSuelo
-    }),
-    new Plataform({
-        x:1200,
-        y:367,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1700,
-        y:300,
-        image:ImagenSueloP
-    }),
-    new Plataform({
-        x:1200,
-        y:170,
-        image:ImagenSueloP
-    })
-]
+        player= new Player()
+
+        Bandera =[
+            new final({x:6800, y:100,width:40,height:46,image:BanderaFinal})
+        ]
+
+    plataforms=[
+        new Plataform({x:-1, y:470, image:ImagenSuelo }),
+        new Plataform({x:1200, y:470, image:ImagenSuelo }),
+        new Plataform({x:1200, y:367, image:ImagenSueloP}),
+        new Plataform({x:1200, y:170, image:ImagenSueloP}),
+        new Plataform({x:1700, y:300, image:ImagenSueloP}),
+        new Plataform({x:2400, y:470, image:ImagenSueloP}),
+        new Plataform({x:2800, y:470, image:ImagenSueloP}),
+        new Plataform({x:3200, y:470, image:ImagenSueloP}),
+        new Plataform({x:3600, y:470, image:ImagenSuelo}),
+        new Plataform({x:4800, y:470, image:ImagenSuelo}),
+        new Plataform({x:5800, y:370, image:ImagenSueloP}),
+        new Plataform({x:6200, y:340, image:ImagenSueloP}),
+        new Plataform({x:6600, y:310, image:ImagenSueloP})
+
+        ]
     
     
     ///Objetos del juego
-      genericObjects= [
-        new GenericObject({
-            x:100,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:500,
-            y:50,
-            image: Nubes
-            
-        }),
-        new GenericObject({
-            x:100,
-            y:190,
-            image: Arbol
-            
-        }),
-        new GenericObject({
-            x:1200,
-            y:190,
-            image: Arbol
-            
-        })
-
+    genericObjects= [
+        new GenericObject({x:500,y:50,image: Nubes}),
+        new GenericObject({x:-1,y:190,image: Arbol}),
+        new GenericObject({x:100,y:190,image: Arbol}),
+        new GenericObject({x:160,y:190,image: Arbol})
     ]
     
     
@@ -661,18 +597,12 @@ let enemigo1=[
 
     ScrollOffset=0;
 }
-    
+
+    let timepoInicio =Date.now()
+ 
     function animacion(){
-        if(paused){
-            ctx.font ='48px Arial'
-            ctx.fillStyle= 'black'
-            ctx.textAlign='center'
-            ctx.fillText('Juego en pausa', canvas.width/2, canvas.height/2 -50)
-            ctx.font = '24px Arial'
-            ctx.fillText('Presiona P para reanudar', canvas.width/ 2, canvas.height / 2 +50)
-            return;
-        }
-        if(!paused){
+        
+        
         requestAnimationFrame(animacion)
         ctx.fillStyle='white'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -687,25 +617,29 @@ let enemigo1=[
                 genericObject.draw()
             })
             
-          
             plataforms.forEach((plataform)=>{
                 plataform.draw()
+               
             })
             player.update()  
 
             enemigo1.forEach((enemigo)=>{
                 enemigo.draw()
                 enemigo.checkColision(player)
-        })
+            })
             Bandera.forEach((Bfinal)=>{
             Bfinal.draw()
             Bfinal.ColisionFinal(player)
-        })
-        moned.forEach((mon)=>{
+            })
+            moned.forEach((mon)=>{
             mon.draw()
             mon.ColisionFinal(player)
-        })
-           
+             })
+             
+             Trampas.forEach((tram)=>{
+                tram.draw()
+                tram.ColisionTrampa(player)
+             })
 
             if (keys.right.pressed && player.position.x<400){
                 player.velocity.x= player.speed
@@ -720,6 +654,7 @@ let enemigo1=[
     
                 plataforms.forEach((plataform)=>{
                     plataform.position.x-=player.speed
+                    
                 })
                
                 genericObjects.forEach((genericObject)=>{
@@ -735,12 +670,17 @@ let enemigo1=[
                 moned.forEach((mon)=>{
                     mon.position.x -=player.speed
                 })
-                   
+                Trampas.forEach((tram)=>{
+                    tram.position.x -=player.speed
+                })
+                
                
                }else if (keys.left.pressed && ScrollOffset > 0){
                 ScrollOffset -=player.speed
+
                 plataforms.forEach((plataform)=>{
                     plataform.position.x += player.speed
+              
                 })
               
                 genericObjects.forEach((genericObject)=>{
@@ -755,7 +695,10 @@ let enemigo1=[
                 moned.forEach((mon)=>{
                     mon.position.x +=player.speed
                 })
-                   
+                Trampas.forEach((tram)=>{
+                    tram.position.x +=player.speed
+                })
+               
                }
             }
             plataforms.forEach((plataform)=>{
@@ -777,6 +720,7 @@ let enemigo1=[
     //PERDISTE VIDA
             if (player.position.y>canvas.height){
                 vidas--;
+                
                 if (vidas<=0){
                    gameState='gameOver'
                     GameOver=false
@@ -786,13 +730,25 @@ let enemigo1=[
                 
                
             }
-            ctx.font = '24px Arial';
-            ctx.fillStyle = 'white';
+            let tiempoTranscurrido = Math.floor((Date.now()- timepoInicio)/1000)
+            let tiempoRestante = timepoLimite - tiempoTranscurrido
+
+            ctx.font ='36px  Pixelify Sans, sans-serif'
+            ctx.fillStyle = 'red'
+            ctx.textAlign='right'
+            ctx.fillText('TIEMPO: '+ tiempoRestante , 600,30)
+            if(tiempoRestante<=0){
+                gameState='gameOver'
+            }
+
+
+            ctx.font = '36px  Pixelify Sans, sans-serif';
+            ctx.fillStyle = 'red';
             ctx.textAlign = 'left';
             ctx.fillText('Vidas: ' + vidas, 20, 30);
 
-            ctx.font = '24px Arial';
-            ctx.fillStyle = 'white';
+            ctx.font = '36px  Pixelify Sans, sans-serif';
+            ctx.fillStyle = 'red';
             ctx.textAlign = 'right';
             ctx.fillText('Coins: ' + Monedas, 1000, 30);
         }
@@ -812,7 +768,7 @@ let enemigo1=[
             
         }
     }
-        }
+        
         
     
 
