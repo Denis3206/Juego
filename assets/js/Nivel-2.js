@@ -375,8 +375,8 @@ class final{
     
     let ImagenSuelo = createImage('./assets/img/PlataformaG.png')
     let ImagenSueloP = createImage('./assets/img/Plataforma.png')
-    let FondoJuego =createImage('./assets/img/fondo2.jpg')
-    let Nubes = createImage('./assets/img/Nubes.png')
+    let FondoJuego =createImage('./assets/img/Fondo2.jpg')
+    let Nubes = createImage('./assets/img/Nubes1.png')
     let Arbol = createImage('./assets/img/Arbol.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
