@@ -487,6 +487,7 @@ let enemigo1=[
 
     ScrollOffset=0;
 }
+let timepoInicio =Date.now()
     
     function animacion(){
         requestAnimationFrame(animacion)
@@ -600,6 +601,7 @@ let enemigo1=[
                 
                
             }
+           
 
             let tiempoTranscurrido = Math.floor((Date.now()- timepoInicio)/1000)
             let tiempoRestante = timepoLimite - tiempoTranscurrido
