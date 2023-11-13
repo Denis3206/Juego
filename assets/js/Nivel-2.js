@@ -481,10 +481,7 @@ class final{
     let ImagenSuelo = createImage('./assets/img/PlataformaG.png')
     let ImagenSueloP = createImage('./assets/img/Plataforma.png')
     let FondoJuego =createImage('./assets/img/Fondo2.jpg')
-<<<<<<< HEAD
-=======
     let Nubes = createImage('./assets/img/Nubes1.png')
->>>>>>> c001b62eaa73a1dd922f1ba1a9d588bf62a394fc
     let Arbol = createImage('./assets/img/Arbol.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
