@@ -475,7 +475,7 @@ class final{
     let Arbol = createImage('./assets/img/Arbol.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
-    let SpriteI =createImage('./assets/img/Spriteiniciali.png')
+    let SpriteI =createImage('./assets/img/SpriteIniciali.png')
     let SpriteIRun=createImage('./assets/img/SpriteIRun.png')
     let Enemie1 =createImage('./assets/img/Enemie1.png')
     let BanderaFinal = createImage('./assets/img/Final.png')
@@ -908,6 +908,11 @@ let Trampas =[
         
         }
         })
+<<<<<<< HEAD
         
        
     }
+=======
+    
+    }
+>>>>>>> c001b62eaa73a1dd922f1ba1a9d588bf62a394fc
