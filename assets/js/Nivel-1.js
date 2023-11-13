@@ -11,8 +11,6 @@ const backgroundMusic=document.getElementById('FondoMusica1')
 const salto= document.getElementById('salto')
 const perder = document.getElementById('gameover')
 const money=document.getElementById('Money')
-let paused = false
-
 
 
 //LOADER
@@ -35,10 +33,20 @@ function drawLoader(){
     ctx.fillText('Nivel 1', canvas.width/2,canvas.height/2+50)
 
     if(Date.now() -startTime>=5000){
-        gameState='playing'
         ctx.clearRect(0,0,canvas.width,canvas.height)
-        IniciarJuego()
-        backgroundMusic.play()
+        ctx.font='16px Arial'
+    ctx.fillStyle='White'
+    ctx.textAlign='center'
+    ctx.fillText('PRESS ENTER ', canvas.width/2,canvas.height/2+50)
+    document.addEventListener('keydown',function(event){
+        if (event.key==="Enter"){
+            gameState='playing'
+            ctx.clearRect(0,0,canvas.width,canvas.height)
+            IniciarJuego()
+            backgroundMusic.play()
+        }
+    })
+        
     } else{
         requestAnimationFrame(drawLoader)
     }
@@ -83,6 +91,7 @@ function IniciarJuego(){
             this.currentSprite= this.sprites.stand.right
             this.currentCropWidth =110
             this.coins =[]
+            this.enSuelo=true
         }
         agregarMoneda(x,y){
             const moneda = new Coins(x,y)
@@ -132,7 +141,9 @@ function IniciarJuego(){
             if (this.position.y + this.height + this.velocity.y <= canvas.height)
             this.velocity.y +=gravedad
             
-           
+           if(this.position.y+this.height>=canvas.height){
+            this.enSuelo=true
+           }
         }
        
     
@@ -243,6 +254,8 @@ class Enemy{
     }
     
 
+    
+
     //GANASTE
 class final{
     constructor({x,y,width,height,image}){
@@ -309,6 +322,19 @@ class final{
             ctx.drawImage(this.image,this.position.x, this.position.y,this.image.width,this.image.height)
            
         }
+    }
+    class FallingPlataform extends Plataform{
+        constructor({x,y,image,fallspeed}){
+            super({x,y,image})
+            this.fallspeed=fallspeed
+            this.falling=false
+        }
+        fall(){
+            if(this.falling){
+                this.position.y += this.fallspeed
+            }
+        }
+        
     }
     
     //TRAMPA
@@ -456,6 +482,7 @@ class final{
     let monedas = createImage('./assets/img/monedas.png')
     /* let Enemie2 = createImage('./assets/img/plantaEnemie.png') */
     let pincho= createImage('./assets/img/trampa.png')
+   
 
     
 let moned = [
@@ -465,6 +492,11 @@ let moned = [
     new Coins({x:2500,y:100,width:40,height:40,image:monedas}),
     new Coins({x:2900,y:100,width:40,height:40,image:monedas}),
     new Coins({x:3300,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:4100,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:4300,y:100,width:40,height:40,image:monedas}), 
+    new Coins({x:5000,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:5200,y:100,width:40,height:40,image:monedas}), 
+    new Coins({x:5500,y:100,width:40,height:40,image:monedas}),
 ]
 
 let enemigo1=[
@@ -487,7 +519,7 @@ let Trampas =[
     let Bandera =[
         new final({x:6800, y:100,width:40,height:46,image:BanderaFinal})
     ]
-
+//PLATAFORMA
     let plataforms=[
     new Plataform({x:-1, y:470, image:ImagenSuelo }),
     new Plataform({x:1200, y:470, image:ImagenSuelo}),
@@ -500,11 +532,12 @@ let Trampas =[
     new Plataform({x:3600, y:470, image:ImagenSuelo}),
     new Plataform({x:4800, y:470, image:ImagenSuelo}),
     new Plataform({x:5800, y:370, image:ImagenSueloP}),
-    new Plataform({x:6200, y:340, image:ImagenSueloP}),
     new Plataform({x:6600, y:310, image:ImagenSueloP})
     ]
     
-    
+    let fallPlataform = [
+        new FallingPlataform({x:6200, y:340, image:ImagenSueloP,fallspeed:4})
+    ]
     ///Objetos del juego
     let genericObjects= [
         new GenericObject({x:500,y:50,image: Nubes}),
@@ -531,11 +564,16 @@ let Trampas =[
     function init(){
         moned = [
             new Coins({x:1250,y:100,width:40,height:40,image:monedas}),
-            new Coins({x:1250,y:350,width:40,height:40,image:monedas}),
-            new Coins({x:1800,y:100,width:40,height:40,image:monedas}),
-            new Coins({x:2500,y:100,width:40,height:40,image:monedas}),
-            new Coins({x:2900,y:100,width:40,height:40,image:monedas}),
-            new Coins({x:3300,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:1250,y:350,width:40,height:40,image:monedas}),
+    new Coins({x:1800,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:2500,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:2900,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:3300,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:4100,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:4300,y:100,width:40,height:40,image:monedas}), 
+    new Coins({x:5000,y:100,width:40,height:40,image:monedas}),
+    new Coins({x:5200,y:100,width:40,height:40,image:monedas}), 
+    new Coins({x:5500,y:100,width:40,height:40,image:monedas}),
             
         ]
         
@@ -544,7 +582,6 @@ let Trampas =[
             new Enemy({x:1700,y:100,width:50,height:50,image:Enemie1}),
             new Enemy({x:2100,y:100,width:50,height:50,image:Enemie1})
         ]
-
         Trampas =[
             new trampa({x:1300, y:100, width:80, height:25, image:pincho }),
             new trampa({x:3900, y:100, width:80, height:25, image:pincho }),
@@ -571,11 +608,12 @@ let Trampas =[
         new Plataform({x:3600, y:470, image:ImagenSuelo}),
         new Plataform({x:4800, y:470, image:ImagenSuelo}),
         new Plataform({x:5800, y:370, image:ImagenSueloP}),
-        new Plataform({x:6200, y:340, image:ImagenSueloP}),
         new Plataform({x:6600, y:310, image:ImagenSueloP})
 
         ]
-    
+        fallPlataform = [
+            new FallingPlataform({x:6200, y:340, image:ImagenSueloP,fallspeed:4})
+        ]
     
     ///Objetos del juego
     genericObjects= [
@@ -607,6 +645,8 @@ let Trampas =[
         ctx.fillStyle='white'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.drawImage(FondoJuego, 0, 0, canvas.width, canvas.height);
+        /* contactoPlaforma()
+        actualizar() */
 //Jugando
         if (gameState==='loading'){
             drawLoader()
@@ -619,8 +659,12 @@ let Trampas =[
             
             plataforms.forEach((plataform)=>{
                 plataform.draw()
-               
             })
+
+            fallPlataform.forEach((plataformf)=>{
+                plataformf.fall()
+                plataformf.draw()  
+        })
             player.update()  
 
             enemigo1.forEach((enemigo)=>{
@@ -646,7 +690,8 @@ let Trampas =[
             }else if((keys.left.pressed && player.position.x>100)||
              (keys.left.pressed && ScrollOffset === 0 && player.position.x >0)){
                 player.velocity.x=-player.speed
-            }else {
+            }
+            else {
                player.velocity.x=0 
         
                if (keys.right.pressed){
@@ -656,7 +701,9 @@ let Trampas =[
                     plataform.position.x-=player.speed
                     
                 })
-               
+                fallPlataform.forEach((plataformf)=>{
+                    plataformf.position.x -=player.speed
+                })
                 genericObjects.forEach((genericObject)=>{
                     genericObject.position.x -= player.speed * 0.66
                 })
@@ -682,13 +729,16 @@ let Trampas =[
                     plataform.position.x += player.speed
               
                 })
-              
+                fallPlataform.forEach((plataformf)=>{
+                    plataformf.position.x +=player.speed
+                })
                 genericObjects.forEach((genericObject)=>{
                     genericObject.position.x += player.speed * 0.66
                 })
                 enemigo1.forEach((enemigo)=>{
                     enemigo.position.x+=player.speed
                 })
+                
                 Bandera.forEach((Bfinal)=>{
                     Bfinal.position.x+=player.speed
                 })
@@ -709,14 +759,27 @@ let Trampas =[
                 plataform.position.x+plataform.image.width)
                 {
                     player.velocity.y=0
+                    player.enSuelo=true
                 }
             })
-           
+            fallPlataform.forEach((plataformf)=>{
+                if (player.position.y + player.height <=
+                    plataformf.position.y && player.position.y + player.height+player.velocity.y>=
+                    plataformf.position.y && player.position.x + player.width>=
+                    plataformf.position.x && player.position.x <=
+                    plataformf.position.x+plataformf.image.width)
+                    {
+                        player.velocity.y=0
+                        plataformf.falling =true
+                        player.enSuelo=true
+                    }
+            })
             
     //META
-            if (ScrollOffset > 5000 ){
+            /* if (ScrollOffset > 5000 ){
                 console.log('Ganaste')
-            }
+            } */
+
     //PERDISTE VIDA
             if (player.position.y>canvas.height){
                 vidas--;
@@ -763,7 +826,7 @@ let Trampas =[
             ctx.fillText('Game Over',canvas.width/2,canvas.height/2-50)
             }
  
-            ctx.font='24px Arial'
+            ctx.font='24px Pixelify Sans, sans-serif'
             ctx.fillText('Presiona r para reiniciar',canvas.width/2,canvas.height/2+50)
             
         }
@@ -773,8 +836,7 @@ let Trampas =[
     
 
     animacion()
-    
-    let haSaltado = false
+
     addEventListener('keydown', ({keyCode}) => {
     /* console.log(keyCode) */
     switch(keyCode){
@@ -799,22 +861,12 @@ let Trampas =[
     
         case 38: 
             console.log('up')
-            if(!haSaltado){
-                salto.play()
+           
+            if (player.enSuelo){
+            salto.play()
                 player.velocity.y -=20
-                haSaltado=true
+                player.enSuelo=false
             }
-            
-            break;
-
-        case 80:
-
-        if(!paused){
-            paused=true
-        }else{
-            paused=!paused
-        }
-            
             break;
 
         case 82:
@@ -822,12 +874,6 @@ let Trampas =[
                 window.location.href="index.html"
                 vidas=3
             }
-            if (!paused){
-                init();
-                paused=false
-            }
-          
-
             break; 
     }
    
@@ -857,10 +903,11 @@ let Trampas =[
         
             case 38: 
                 console.log('up')
-                haSaltado=false                
+                
                 break;
         
         }
         })
-    
+        
+       
     }
