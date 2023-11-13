@@ -443,7 +443,7 @@ class final{
     let Nubes = createImage('./assets/img/Nubes1.png')
     let Sprite =createImage('./assets/img/SpriteInicial.png')
     let SpriteDRun =createImage('./assets/img/SpriteDRun.png')
-    let SpriteI =createImage('./assets/img/Spriteiniciali.png')
+    let SpriteI =createImage('./assets/img/SpriteIniciali.png')
     let SpriteIRun=createImage('./assets/img/SpriteIRun.png')
     let Enemie1 =createImage('./assets/img/Enemie1.png')
     let BanderaFinal = createImage('./assets/img/Final.png')
