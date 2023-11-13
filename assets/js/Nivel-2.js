@@ -10,7 +10,7 @@ let timepoLimite = 180
 const backgroundMusic=document.getElementById('FondoMusica1')
 const salto= document.getElementById('salto')
 const perder = document.getElementById('gameover')
-
+const money=document.getElementById('Money')
 
 
 //LOADER
@@ -464,6 +464,7 @@ class final{
                 player.position.y +player.height>this.position.y
                 ){
                     if(player.position.y < this.position.y){
+                        money.play()
                        Monedas++
                         this.colisionada=true
                         }
